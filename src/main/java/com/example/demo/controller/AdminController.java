@@ -5,6 +5,7 @@ import com.alibaba.fastjson.JSONObject;
 import com.example.demo.service.AdminService;
 import com.example.demo.util.HttpUtil;
 import com.example.demo.util.ResponseDataUtil;
+import com.example.demo.util.aop.SystemLogAnnotation;
 import com.example.demo.util.exception.CustomException;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.net.URLDecoder;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +29,8 @@ import java.util.Map;
 @RestController
 @RequestMapping("/admin")
 public class AdminController {
+
+
 
     @Autowired
     private AdminService adminService;
@@ -76,11 +81,14 @@ public class AdminController {
     *@return
     **/
     @RequestMapping("sendMsg")
-    public Map sendMsg(HttpServletRequest request, HttpServletResponse response){
+    @SystemLogAnnotation
+    public Map sendMsg(HttpServletRequest request, HttpServletResponse response)throws Exception{
         String username = "xiechengdp";
         String password = "lHlh1eE3";
         String mobile = request.getParameter("mobilePhone");
         String content = request.getParameter("content");
+        content = URLDecoder.decode(content,"UTF-8");
+        System.out.println(content);
         String xh = request.getParameter("xh");
         if(StringUtils.isEmpty(mobile) || StringUtils.isEmpty(content)){
             throw new CustomException("10003","手机号或内容不能为空");
@@ -93,7 +101,9 @@ public class AdminController {
         map.put("xh",xh);
         String jsonString = JSON.toJSONString(map);
         String url = "http://114.215.196.145/sendSmsApi?username="+username+"&password="+password+"&mobile="+mobile+"&content="+content+"&xh="+xh;
-        String result = HttpUtil.postRequest(url,jsonString,"UTF-8");
+        String utf8String = new String(url.getBytes(),"UTF-8");
+        System.out.println(utf8String);
+        String result = HttpUtil.postRequest(utf8String,jsonString,"UTF-8");
         System.out.println(result);
         return ResponseDataUtil.responseData(result);
 //        JSONObject resultJson = JSON.parseObject(result);
