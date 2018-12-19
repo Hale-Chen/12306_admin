@@ -1,6 +1,9 @@
 package com.example.demo.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.JSONObject;
 import com.example.demo.service.AdminService;
+import com.example.demo.util.HttpUtil;
 import com.example.demo.util.ResponseDataUtil;
 import com.example.demo.util.exception.CustomException;
 import org.apache.commons.lang3.StringUtils;
@@ -10,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -26,6 +30,13 @@ public class AdminController {
     @Autowired
     private AdminService adminService;
 
+    /**
+    *@Author FeiChen
+    *@Description 获取订单列表
+    *@Date 11:10 2018/12/19
+    *@Param [request, response]
+    *@return java.util.Map
+    **/
     @RequestMapping("selectOrderList")
     public Map selectOrderList(HttpServletRequest request, HttpServletResponse response){
         String mobilePhone = request.getParameter("mobilePhone");
@@ -37,6 +48,13 @@ public class AdminController {
         return resultMap;
     }
 
+    /**
+    *@Author FeiChen
+    *@Description 删除订单
+    *@Date 11:11 2018/12/19
+    *@Param [request, response]
+    *@return java.util.Map
+    **/
     @RequestMapping("deleteOrderById")
     public Map deleteOrderById(HttpServletRequest request, HttpServletResponse response){
         String id = request.getParameter("id");
@@ -49,4 +67,37 @@ public class AdminController {
         }
         return ResponseDataUtil.responseData(result);
     }
+
+    /**
+    *@Author FeiChen
+    *@Description 发送短信
+    *@Date 11:14 2018/12/19
+    *@Param
+    *@return
+    **/
+    @RequestMapping("sendMsg")
+    public Map sendMsg(HttpServletRequest request, HttpServletResponse response){
+        String username = "xiechengdp";
+        String password = "lHlh1eE3";
+        String mobile = request.getParameter("mobilePhone");
+        String content = request.getParameter("content");
+        String xh = request.getParameter("xh");
+        if(StringUtils.isEmpty(mobile) || StringUtils.isEmpty(content)){
+            throw new CustomException("10003","手机号或内容不能为空");
+        }
+        Map map = new HashMap();
+        map.put("username",username);
+        map.put("password",password);
+        map.put("content",content);
+        map.put("mobile",mobile);
+        map.put("xh",xh);
+        String jsonString = JSON.toJSONString(map);
+        String url = "http://114.215.196.145/sendSmsApi?username="+username+"&password="+password+"&mobile="+mobile+"&content="+content+"&xh="+xh;
+        String result = HttpUtil.postRequest(url,jsonString,"UTF-8");
+        System.out.println(result);
+        return ResponseDataUtil.responseData(result);
+//        JSONObject resultJson = JSON.parseObject(result);
+
+    }
+
 }

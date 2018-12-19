@@ -4,9 +4,9 @@
 
 <mapper namespace="com.example.demo.mapper.AdminMapper">
     <select id="selectOrderList" parameterType="string" resultType="map">
-        select * from `order` where 1=1
+        select *,date_format(created_at,'%Y-%m-%d %H:%i:%s') as orderDate from `order` where 1=1
         <if test="date!=null and date!=''">
-            and date = #{date}
+            and date_format(created_at,'%Y-%m-%d') = #{date}
         </if>
         <if test="mobilePhone!=null and mobilePhone!=''">
             and tel = #{mobilePhone}
