@@ -40,7 +40,7 @@ public class HttpUtil {
             connection.setInstanceFollowRedirects(true);
             connection.setRequestMethod("POST");
             connection.setRequestProperty("Accept", "application/json");
-            connection.setRequestProperty("Content-Type", "application/json");
+            connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
             connection.connect();
 
             OutputStreamWriter out = new OutputStreamWriter(connection.getOutputStream(), "UTF-8");
