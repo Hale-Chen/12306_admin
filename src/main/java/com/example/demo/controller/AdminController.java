@@ -80,16 +80,56 @@ public class AdminController {
     *@Param
     *@return
     **/
-    @RequestMapping("sendMsg")
+    @RequestMapping("sendMsgSuccess")
     @SystemLogAnnotation
-    public Map sendMsg(HttpServletRequest request, HttpServletResponse response)throws Exception{
+    public Map sendMsgSuccess(HttpServletRequest request, HttpServletResponse response)throws Exception{
+        request.setCharacterEncoding("UTF-8");
+
+        String mobile = request.getParameter("mobilePhone");
+        String content = "小助手抢票已完成，请尽快去12306官方进行车票支付。" +
+                "温馨提示：开车前2小时以外的车票，须在30分钟内完成支付，开车前2小时以内的车票，须在10分钟内完成支付。" +
+                "客服电话：19946187917【小助手】";
+        String result = sendMessage(mobile,content);
+
+        return ResponseDataUtil.responseData(result);
+//        JSONObject resultJson = JSON.parseObject(result);
+
+    }
+
+    @RequestMapping("sendMsgCross")
+    @SystemLogAnnotation
+    public Map sendMsgCross(HttpServletRequest request, HttpServletResponse response)throws Exception{
+        request.setCharacterEncoding("UTF-8");
+
+        String mobile = request.getParameter("mobilePhone");
+        String content = "您的票已完成跨站抢票，请尽快去12306官方进行车票支付。" +
+                "温馨提示：开车前2小时以外的车票，须在30分钟内完成支付，开车前2小时以内的车票，须在10分钟内完成支付。" +
+                "客服电话：19946187917【小助手】";
+        String result = sendMessage(mobile,content);
+
+        return ResponseDataUtil.responseData(result);
+//        JSONObject resultJson = JSON.parseObject(result);
+
+    }
+
+    @RequestMapping("sendMsgConflict")
+    @SystemLogAnnotation
+    public Map sendMsgconFlict(HttpServletRequest request, HttpServletResponse response)throws Exception{
+        request.setCharacterEncoding("UTF-8");
+
+        String mobile = request.getParameter("mobilePhone");
+        String content = "您的抢票订单与已有行程冲突，请确认行程重新下单。客服电话：19946187917【小助手】";
+        String result = sendMessage(mobile,content);
+
+        return ResponseDataUtil.responseData(result);
+//        JSONObject resultJson = JSON.parseObject(result);
+
+    }
+
+    private String sendMessage(String mobile,String content)throws Exception{
         String username = "xiechengdp";
         String password = "lHlh1eE3";
-        String mobile = request.getParameter("mobilePhone");
-        String content = request.getParameter("content");
-        content = URLDecoder.decode(content,"UTF-8");
-        System.out.println(content);
-        String xh = request.getParameter("xh");
+        String xh = null;
         if(StringUtils.isEmpty(mobile) || StringUtils.isEmpty(content)){
             throw new CustomException("10003","手机号或内容不能为空");
         }
@@ -105,8 +145,7 @@ public class AdminController {
         System.out.println(utf8String);
         String result = HttpUtil.postRequest(utf8String,jsonString,"UTF-8");
         System.out.println(result);
-        return ResponseDataUtil.responseData(result);
-//        JSONObject resultJson = JSON.parseObject(result);
+        return result;
 
     }
 
